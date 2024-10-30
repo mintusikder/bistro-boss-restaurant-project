@@ -10,7 +10,9 @@ const MenuItemCard = ({ item }) => {
   <p>{recipe}</p>
   </div>
       <p className="text-yellow-500 font-thin">${price}</p>
+
     </div>
+    
   );
 };
 

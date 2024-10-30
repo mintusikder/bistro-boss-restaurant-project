@@ -7,6 +7,9 @@ const NavBar = () => {
       <li>
         <Link>Home</Link>
       </li>
+      <li>
+        <Link to="/menu">Our Menu</Link>
+      </li>
     </>
   );
   return (
@@ -31,7 +34,7 @@ const NavBar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+            className="menu text-black menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
     {nav}
           </ul>

@@ -1,6 +1,7 @@
 import React from "react";
 import SectionTitle from "./SectionTitle";
 import featuredImg from "../assets/home/featured.jpg";
+import { Link } from "react-router-dom";
 
 const Featured = () => {
   return (
@@ -32,7 +33,10 @@ const Featured = () => {
               Eaque repellat recusandae ad laudantium tempore consequatur
               consequuntur omnis ullam maxime tenetur.
             </p>
-            <button  className="btn btn-outline uppercase mt-4 text-white border-0 border-b-4 ">Read More</button>
+            <button  className="btn btn-outline uppercase mt-4 text-white border-0 border-b-4 ">
+
+                <Link to="/menu">Read More</Link>
+            </button>
           </div>
         </div>
       </div>

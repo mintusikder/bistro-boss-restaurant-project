@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 
 const PopularMenu = () => {
   const [menu, setMenu] = useState([]);
-
   useEffect(() => {
     fetch("menu.json")
       .then((res) => res.json())

@@ -4,10 +4,14 @@ import Swiper from '../../components/Swiper';
 import PopularMenu from '../../components/PopularMenu';
 import Featured from '../../components/Featured';
 import Testimonials from '../../components/Testimonials';
+import { Helmet } from 'react-helmet-async';
 
 const Home = () => {
     return (
         <div>
+                <Helmet>
+                <title>Bistro | Home</title>
+            </Helmet>
             <Banner></Banner>
             <Swiper></Swiper>
             <PopularMenu></PopularMenu>

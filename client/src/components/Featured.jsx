@@ -9,10 +9,12 @@ const Featured = () => {
       style={{ backgroundImage: `url(${featuredImg})` }}
     >
       <div className="bg-black bg-opacity-60  py-8 px-4 md:px-16 rounded-md">
-        <SectionTitle
+   <div className="text-white">
+   <SectionTitle
           heading={"Featured Items"}
           subHeading={"---Check it out---"}
         />
+   </div>
         <div className="md:flex items-center justify-center md:py-16 md:px-36 text-white">
           <div className="flex justify-center md:justify-start">
             <img

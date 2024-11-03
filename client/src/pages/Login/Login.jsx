@@ -2,26 +2,35 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   loadCaptchaEnginge,
   LoadCanvasTemplate,
-  LoadCanvasTemplateNoReload,
   validateCaptcha,
 } from "react-simple-captcha";
 import { AuthContext } from "../../provider/AuthProvider";
+import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Helmet } from "react-helmet-async";
 const Login = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => console.log(data);
   const captchaRef = useRef(null);
   const [disable, setDisable] = useState(true);
-  const {signInUser} = useContext(AuthContext)
+  const { signInUser } = useContext(AuthContext);
   const handelLogin = (e) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
     console.log(password, email);
-    signInUser(email,password)
-    .then(result =>{
-      const user = result.user 
-      console.log(user)
-    })
-    .catch(err)
+    signInUser(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+      })
+      .catch(err);
   };
   useEffect(() => {
     loadCaptchaEnginge(6);
@@ -29,15 +38,19 @@ const Login = () => {
 
   const handelValidate = (e) => {
     const user_captcha_value = captchaRef.current.value;
-    console.log(user_captcha_value)
+    console.log(user_captcha_value);
     if (validateCaptcha(user_captcha_value) == true) {
       setDisable(false);
     } else {
       alert("Captcha Does Not Match");
-      setDisable(true)
+      setDisable(true);
     }
   };
   return (
+  <>
+  <Helmet>
+    <title>Bistro | Login</title>
+  </Helmet>
     <div className="hero bg-base-200 min-h-screen">
       <div className="hero-content flex-col lg:flex-row-reverse">
         <div className="text-center w-1/2 lg:text-left">
@@ -105,10 +118,16 @@ const Login = () => {
               type="submit"
               value="Login"
             />
+            <p>
+              <small>
+                New Here? <Link to="/signup">Create an Account</Link>{" "}
+              </small>
+            </p>
           </form>
         </div>
       </div>
     </div>
+  </>
   );
 };
 

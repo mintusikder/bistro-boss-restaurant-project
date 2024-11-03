@@ -13,6 +13,9 @@ const NavBar = () => {
       <li>
         <Link to="/order">OUR SHOP</Link>
       </li>
+      <li>
+        <Link to="/login">LOGIN</Link>
+      </li>
     </>
   );
   return (
@@ -39,15 +42,13 @@ const NavBar = () => {
             tabIndex={0}
             className="menu text-black menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
-    {nav}
+            {nav}
           </ul>
         </div>
         <a className="btn btn-ghost text-xl">BISTRO BOSS</a>
       </div>
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
-       {nav}
-        </ul>
+        <ul className="menu menu-horizontal px-1">{nav}</ul>
       </div>
       <div className="navbar-end">
         <a className="btn">Button</a>

@@ -12,7 +12,7 @@ const SignUp = () => {
     reset,
     formState: { errors },
   } = useForm();
-  const { createUser, updateUserProfile } = useContext(AuthContext);
+  const { createUser, updateUserProfile,logOut } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
     try {
@@ -31,7 +31,11 @@ const SignUp = () => {
             timer: 1500
           });
           reset()
-          navigate("/")
+          logOut()
+          .then(()=>{
+            navigate("/login")
+          })
+         
         })
         .catch((error) => {
           console.error(error);

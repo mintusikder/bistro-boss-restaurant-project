@@ -20,12 +20,12 @@ const AuthProvider = ({ children }) => {
   //signInUser
   const signInUser = (email, password) => {
     setLoading(true);
-    return signInWithEmailAndPassword();
+    return signInWithEmailAndPassword(auth,email,password);
   };
   //logOut
   const logOut = () => {
     setLoading(true);
-    return signOut();
+    return signOut(auth);
   };
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {

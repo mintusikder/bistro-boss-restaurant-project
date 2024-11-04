@@ -8,126 +8,132 @@ import { AuthContext } from "../../provider/AuthProvider";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet-async";
+
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => console.log(data);
-  const captchaRef = useRef(null);
+  const { register, handleSubmit, formState: { errors } } = useForm();
   const [disable, setDisable] = useState(true);
   const { signInUser } = useContext(AuthContext);
-  const handelLogin = (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const email = form.email.value;
-    const password = form.password.value;
-    console.log(password, email);
-    signInUser(email, password)
-      .then((result) => {
-        const user = result.user;
-        console.log(user);
-      })
-      .catch(err);
-  };
+  const captchaRef = useRef(null);
+
   useEffect(() => {
     loadCaptchaEnginge(6);
   }, []);
 
-  const handelValidate = (e) => {
-    const user_captcha_value = captchaRef.current.value;
-    console.log(user_captcha_value);
-    if (validateCaptcha(user_captcha_value) == true) {
+  const onSubmit = (data) => {
+    const { email, password } = data;
+    signInUser(email, password)
+      .then((result) => {
+        const user = result.user;
+        console.log("User logged in:", user);
+      })
+      .catch((error) => console.log("Login error:", error));
+  };
+
+  const handleValidate = () => {
+    const userCaptchaValue = captchaRef.current.value;
+    if (validateCaptcha(userCaptchaValue)) {
       setDisable(false);
     } else {
-      alert("Captcha Does Not Match");
       setDisable(true);
     }
   };
-  return (
-  <>
-  <Helmet>
-    <title>Bistro | Login</title>
-  </Helmet>
-    <div className="hero bg-base-200 min-h-screen">
-      <div className="hero-content flex-col lg:flex-row-reverse">
-        <div className="text-center w-1/2 lg:text-left">
-          <h1 className="text-5xl font-bold">Login now!</h1>
-          <p className="py-6">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
-          </p>
-        </div>
-        <div className="card bg-base-100 w-1/2 max-w-sm shrink-0 shadow-2xl">
-          <form onSubmit={handelLogin} className="card-body">
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Email</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                placeholder="email"
-                className="input input-bordered"
-                required
-              />
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Password</span>
-              </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="password"
-                className="input input-bordered"
-                required
-              />
-              <label className="label">
-                <a href="#" className="label-text-alt link link-hover">
-                  Forgot password?
-                </a>
-              </label>
-            </div>
-            <div className="form-control">
-              <label className="label">
-                <LoadCanvasTemplate />
-              </label>
-              <input
-                ref={captchaRef}
-                type="text"
-                name="captcha"
-                placeholder="Captcha"
-                className="input input-bordered"
-                required
-              />
 
-              <button
-                onClick={handelValidate}
-                className="btn btn-outline btn-xs mt-3"
-              >
-                Validate
-              </button>
-            </div>
-            <input
-              disabled={disable}
-              className="btn btn-primary"
-              type="submit"
-              value="Login"
-            />
-            <p>
-              <small>
-                New Here? <Link to="/signup">Create an Account</Link>{" "}
-              </small>
+  return (
+    <>
+      <Helmet>
+        <title>Bistro | Login</title>
+      </Helmet>
+      <div className="hero bg-base-200 min-h-screen">
+        <div className="hero-content flex-col lg:flex-row-reverse">
+          <div className="text-center w-1/2 lg:text-left">
+            <h1 className="text-5xl font-bold">Login now!</h1>
+            <p className="py-6">
+              Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
+              excepturi exercitationem quasi. In deleniti eaque aut repudiandae
+              et a id nisi.
             </p>
-          </form>
+          </div>
+          <div className="card bg-base-100 w-1/2 max-w-sm shrink-0 shadow-2xl">
+            <form onSubmit={handleSubmit(onSubmit)} className="card-body">
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Email</span>
+                </label>
+                <input
+                  type="email"
+                  placeholder="email"
+                  className="input input-bordered"
+                  {...register("email", { required: "Email is required" })}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Password</span>
+                </label>
+                <input
+                  type="password"
+                  placeholder="password"
+                  className="input input-bordered"
+                  {...register("password", { required: "Password is required" })}
+                />
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
+                <label className="label">
+                  <a href="#" className="label-text-alt link link-hover">
+                    Forgot password?
+                  </a>
+                </label>
+              </div>
+
+              <div className="form-control">
+                <label className="label">
+                  <LoadCanvasTemplate />
+                </label>
+                <input
+                  ref={captchaRef}
+                  type="text"
+                  placeholder="Enter Captcha"
+                  className="input input-bordered"
+                  onBlur={handleValidate}
+                  required
+                />
+                {!disable && (
+                  <p className="text-green-500 text-xs mt-1">
+                    Captcha validated successfully!
+                  </p>
+                )}
+                {disable && (
+                  <p className="text-red-500 text-xs mt-1">
+                    Captcha does not match.
+                  </p>
+                )}
+              </div>
+
+              <input
+                disabled={disable}
+                className="btn btn-primary"
+                type="submit"
+                value="Login"
+              />
+              <p>
+                <small>
+                  New Here? <Link to="/signup">Create an Account</Link>
+                </small>
+              </p>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-  </>
+    </>
   );
 };
 

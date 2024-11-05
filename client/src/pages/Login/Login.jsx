@@ -118,12 +118,12 @@ const Login = () => {
                   value="Login"
                 />
               </div>
+              <p>
+                <small>
+                  New Here? <Link to="/signup">Create an account</Link>{" "}
+                </small>
+              </p>
             </form>
-            <p>
-              <small>
-                New Here? <Link to="/signup">Create an account</Link>{" "}
-              </small>
-            </p>
           </div>
         </div>
       </div>

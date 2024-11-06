@@ -1,17 +1,18 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
-import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-const OrderCard = ({ item }) => {
+const FoodCard = ({ item }) => {
   const { name, image, price, recipe, _id } = item;
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const axiosSecure = useAxiosSecure();
 
-  const handleCard = (food) => {
+  const handleAddToCart = () => {
     if (user && user.email) {
+      //send cart item to the database
       const cartItem = {
         menuId: _id,
         email: user.email,
@@ -19,61 +20,52 @@ const OrderCard = ({ item }) => {
         image,
         price,
       };
-      axios
-        .post("http://localhost:5000/carts", cartItem)
-        .then((res) => {
-          if (res.status === 200) {
-            Swal.fire({
-              title: "Added to Cart!",
-              text: `${name} has been added to your cart.`,
-              icon: "success",
-              confirmButtonText: "Continue Shopping",
-            });
-          }
-        })
-        .catch((error) => {
-          console.error("Error adding to cart:", error);
+      axiosSecure.post("/carts", cartItem).then((res) => {
+        console.log(res.data);
+        if (res.data.insertedId) {
           Swal.fire({
-            title: "Error",
-            text: "Could not add item to cart. Please try again.",
-            icon: "error",
-            confirmButtonText: "Close",
+            position: "top-end",
+            icon: "success",
+            title: `${name} added to your cart`,
+            showConfirmButton: false,
+            timer: 1500,
           });
-        });
+        }
+      });
     } else {
       Swal.fire({
-        title: "Not Logged In",
-        text: "Please log in to add items to your cart.",
+        title: "You are not Logged In",
+        text: "Please login to add to the cart?",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Log In",
+        confirmButtonText: "Yes, login!",
       }).then((result) => {
         if (result.isConfirmed) {
+          //   send the user to the login page
           navigate("/login", { state: { from: location } });
         }
       });
     }
   };
-
   return (
-    <div className="card bg-base-100 w-96 shadow-xl">
+    <div className="card w-96 bg-base-100 shadow-xl">
       <figure>
-        <img src={image} alt={name} />
+        <img src={image} alt="Shoes" />
       </figure>
-      <p className="bg-slate-900 text-white absolute right-0 mt-4 mr-5 px-5">
+      <p className="absolute right-0 mr-4 mt-4 px-4 bg-slate-900 text-white">
         ${price}
       </p>
-      <div className="card-body text-center">
-        <h2 className="text-3xl">{name}</h2>
+      <div className="card-body flex flex-col items-center">
+        <h2 className="card-title">{name}</h2>
         <p>{recipe}</p>
-        <div className="flex justify-center">
+        <div className="card-actions justify-end">
           <button
-            onClick={() => handleCard(item)}
-            className="btn btn-outline uppercase border-0 border-b-4 mb-16"
+            onClick={handleAddToCart}
+            className="btn btn-outline bg-slate-100 border-0 border-b-4 border-orange-400 mt-4"
           >
-            Add To Cart
+            Add to Cart
           </button>
         </div>
       </div>
@@ -81,4 +73,4 @@ const OrderCard = ({ item }) => {
   );
 };
 
-export default OrderCard;
+export default FoodCard;

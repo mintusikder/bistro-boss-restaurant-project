@@ -4,8 +4,8 @@ const cors = require("cors");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
-//
-//middleware
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
@@ -22,28 +22,32 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    await client.connect();
     const menuCollection = client.db("bistroDb").collection("menu");
     const reviewsCollection = client.db("bistroDb").collection("reviews");
     const cartCollection = client.db("bistroDb").collection("carts");
+
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+
     app.get("/reviews", async (req, res) => {
       const result = await reviewsCollection.find().toArray();
       res.send(result);
     });
-    // carts collection 
-    app.post("/carts" , async(res,req) =>{
-      const cartItem = req.body 
-      const result = await cartCollection.insertOne(cartItem)
-      res.send(result)
-    })
+
+    // Carts collection
+    app.post("/carts", async (req, res) => {
+      const cartItem = req.body;
+      const result = await cartCollection.insertOne(cartItem);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();

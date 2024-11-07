@@ -3,39 +3,50 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Helmet } from "react-helmet-async";
 import { AuthContext } from "../../provider/AuthProvider";
-import Swal from 'sweetalert2'
+import Swal from "sweetalert2";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
+
 const SignUp = () => {
-  const navigate = useNavigate()
+  const axiosPublic = useAxiosPublic();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm();
-  const { createUser, updateUserProfile,logOut } = useContext(AuthContext);
+  const { createUser, updateUserProfile, logOut } = useContext(AuthContext);
 
   const onSubmit = async (data) => {
     try {
       const result = await createUser(data.email, data.password);
       const user = result.user;
-
       console.log(user);
+
       updateUserProfile(data.name, data.photoURL)
         .then(() => {
-          console.log("update user profile");
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "SignUp SuccessFull",
-            showConfirmButton: false,
-            timer: 1500
+          console.log("Updated user profile");
+      
+          const userInfo = {
+            name: data.name,
+            email: data.email,
+          };
+
+          axiosPublic.post("/users", userInfo).then((res) => {
+            if (res.data.insertedId) {
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Sign-Up Successful",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
           });
-          reset()
-          logOut()
-          .then(()=>{
-            navigate("/login")
-          })
-         
+          reset();
+          logOut().then(() => {
+            navigate("/login");
+          });
         })
         .catch((error) => {
           console.error(error);
@@ -43,15 +54,6 @@ const SignUp = () => {
     } catch (err) {
       console.error("Error creating user:", err.message);
     }
-    // createUser(data.email, data.password)
-    // .then(result =>{
-    //     const user = result.user
-    //     console.log(user)
-    //     updateUserProfile(data.name, data.photoURL)
-    //     .then(()=>{
-
-    //     })
-    // })
   };
 
   return (
@@ -69,7 +71,7 @@ const SignUp = () => {
               et a id nisi.
             </p>
           </div>
-          <div className="card bg-base-100 w-full lg:w-1/2 max-w-sm shrink-0 shadow-2xl">
+          <div className="card bg-base-100 w-full lg:w-1/2 max-w-sm shadow-2xl">
             <form onSubmit={handleSubmit(onSubmit)} className="card-body">
               <div className="form-control">
                 <label className="label">
@@ -92,16 +94,14 @@ const SignUp = () => {
                   <span className="label-text">Photo URL</span>
                 </label>
                 <input
-                  {...register("photoURL", {
-                    required: "photoURL is required",
-                  })}
+                  {...register("photoURL", { required: "Photo URL is required" })}
                   type="text"
                   placeholder="Photo URL"
                   className="input input-bordered"
                 />
-                {errors.name && (
+                {errors.photoURL && (
                   <span className="text-red-500 mt-1">
-                    {errors.name.message}
+                    {errors.photoURL.message}
                   </span>
                 )}
               </div>
@@ -129,8 +129,8 @@ const SignUp = () => {
                   {...register("password", {
                     required: "Password is required",
                     pattern: {
-                      value: /^[A-Za-z]+$/i,
-                      message: "Password must contain only letters",
+                      value: /^[A-Za-z0-9]+$/i,
+                      message: "Password must contain only letters and numbers",
                     },
                     minLength: {
                       value: 5,

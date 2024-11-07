@@ -23,9 +23,17 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
+    const userCollection = client.db("bistroDb").collection("users");
     const menuCollection = client.db("bistroDb").collection("menu");
     const reviewsCollection = client.db("bistroDb").collection("reviews");
     const cartCollection = client.db("bistroDb").collection("carts");
+
+    //user api
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
 
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
@@ -49,12 +57,12 @@ async function run() {
       const result = await cartCollection.insertOne(cartItem);
       res.send(result);
     });
-    app.delete("/carts/:id",async(req,res)=>{
-      const id = req.params.id
-      const query ={_id : new ObjectId(id)}
-      const result = await cartCollection.deleteOne(query)
-      res.send(result)
-    })
+    app.delete("/carts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(

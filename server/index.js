@@ -43,7 +43,13 @@ async function run() {
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
-
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
+    //menu api
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);

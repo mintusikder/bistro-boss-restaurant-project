@@ -5,18 +5,32 @@ import { FaTrashAlt, FaUsers } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 const AllUsers = () => {
-  const axisSecure = useAxiosSecure();
-  const { data: users = [],refetch } = useQuery({
+  const axiosSecure = useAxiosSecure();
+  const { data: users = [], refetch } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const res = await axisSecure.get("/users");
+      const res = await axiosSecure.get("/users");
       return res.data;
     },
   });
-  const handelMakeAdmin =(user) =>{
 
-  }
-  const handelDelete =() =>{
+  const handleMakeAdmin = (user) => {
+    axiosSecure.patch(`/users/admin/${user._id}`).then((res) => {
+      console.log(res.data);
+      if (res.data.modifiedCount > 0) {
+        refetch();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: `${user.name} is an admin now`,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    });
+  };
+
+  const handleDelete = (userId) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -27,9 +41,9 @@ const AllUsers = () => {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        axisSecure.delete(`/users/${users._id}`).then((res) => {
+        axiosSecure.delete(`/users/${userId}`).then((res) => {
           if (res.data.deletedCount > 0) {
-            refetch()
+            refetch();
             Swal.fire({
               title: "Deleted!",
               text: "Your file has been deleted.",
@@ -39,7 +53,8 @@ const AllUsers = () => {
         });
       }
     });
-  }
+  };
+
   return (
     <div>
       <div className="flex justify-around">
@@ -65,18 +80,21 @@ const AllUsers = () => {
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>
-
-                <button
-                    className="btn btn-ghost btn-xs"
-                    onClick={() => handelMakeAdmin(user)}
-                  >
-                    <FaUsers className="text-red-500"></FaUsers>
-                  </button>
+                  {user.role === "admin" ? (
+                    "Admin"
+                  ) : (
+                    <button
+                      className="btn btn-ghost btn-xs"
+                      onClick={() => handleMakeAdmin(user)}
+                    >
+                      <FaUsers className="text-red-500"></FaUsers>
+                    </button>
+                  )}
                 </td>
                 <td>
-                <button
+                  <button
                     className="btn btn-ghost btn-xs"
-                    onClick={() => handelDelete(user)}
+                    onClick={() => handleDelete(user._id)}
                   >
                     <FaTrashAlt className="text-red-500"></FaTrashAlt>
                   </button>

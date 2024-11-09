@@ -13,6 +13,9 @@ const AllUsers = () => {
       return res.data;
     },
   });
+  const handelMakeAdmin =(user) =>{
+
+  }
   const handelDelete =() =>{
     Swal.fire({
       title: "Are you sure?",
@@ -65,7 +68,7 @@ const AllUsers = () => {
 
                 <button
                     className="btn btn-ghost btn-xs"
-                    onClick={() => handelDelete(user)}
+                    onClick={() => handelMakeAdmin(user)}
                   >
                     <FaUsers className="text-red-500"></FaUsers>
                   </button>
